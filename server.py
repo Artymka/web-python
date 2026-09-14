@@ -56,12 +56,18 @@ validation_funcs: Dict[int, Callable] = {
 class Server:
     def __init__(self, port: int):
         self.server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_sock.bind(("127.0.0.1", port))
-        self.server_sock.listen(5)
+        self.server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.port = port
 
     def start_server(self):
-        self.threads = []
-        while True:
+        self.server_sock.bind(("127.0.0.1", self.port))
+        self.server_sock.listen(5)
+
+        self._threads: list[threading.Thread] = []
+        self._stop_event = threading.Event()
+
+        print(f"[{datetime.now()}] start serving...")
+        while not self._stop_event.is_set():
             client_sock, address = self.server_sock.accept()
             print(f"[{datetime.now()}] have a new client: {address}")
 
@@ -69,13 +75,22 @@ class Server:
                 target=self._serve_client, args=(client_sock, address[1])
             )
             t.daemon = True
-            self.threads.append(t)
+            self._threads.append(t)
             t.start()
+
+    def stop(self):
+        self._stop_event.set()
+        try:
+            self.server_sock.close()   # wakes accept()
+        except OSError:
+            pass
+        for t in self._threads:
+            t.join(timeout=2)
 
     def _serve_client(self, client_sock: socket.socket, id: int):
         try:
             with client_sock.makefile("rwb", True) as pipe:
-                while True:
+                while not self._stop_event.is_set():
                     try:
                         _, operation_code, content = rpc.read_request(pipe)
                         print(

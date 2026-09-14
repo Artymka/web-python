@@ -8,6 +8,7 @@ import rpc
 class Client:
     def __init__(self, server_port: int):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(5)
         self.server_port = server_port
 
     def start_client(self):
@@ -79,6 +80,7 @@ if __name__ == "__main__":
     c = Client(8080)
     c.start_client()
 
+    c.get_completions()
     session_key = c.create_session("7.8.8.8", "ru", "conputer")
     session_key_for_removal = c.create_session("1.1.1.1", "en", "androd")
     c.get_sessions()
@@ -91,7 +93,8 @@ if __name__ == "__main__":
     c.delete_task(task_key_for_removal)
     c.get_tasks()
 
-    completion_key = c.create_completion("response", "planning", "no error", task_key)
+    completion_key = c.create_completion(
+        "response", "planning", "no error", task_key)
     completion_key_for_removal = c.create_completion(
         "response", "planning", "no error", task_key
     )
