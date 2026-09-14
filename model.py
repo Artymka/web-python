@@ -41,7 +41,7 @@ def base_create(source: list, *args) -> int:
                 has_key = True
                 break
         if has_key:
-            key = int(random.random())
+            key = random.randint(0, 1 << 31)
         else:
             break
 
@@ -63,7 +63,17 @@ def base_get(source: list, key: int) -> list | None:
             return item
 
 
+def reset_state():
+    with sessions_lock:
+        sessions.clear()
+    with tasks_lock:
+        tasks.clear()
+    with completions_lock:
+        completions.clear()
+
 # particular functions
+
+
 @use_lock(completions_lock)
 def create_completion(response: str, stage: str, error: str, task: int) -> int:
     return base_create(completions, response, stage, error, task)
