@@ -81,7 +81,7 @@ class Server:
     def stop(self):
         self._stop_event.set()
         try:
-            self.server_sock.close()   # wakes accept()
+            self.server_sock.close()  # wakes accept()
         except OSError:
             pass
         for t in self._threads:

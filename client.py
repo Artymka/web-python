@@ -93,8 +93,7 @@ if __name__ == "__main__":
     c.delete_task(task_key_for_removal)
     c.get_tasks()
 
-    completion_key = c.create_completion(
-        "response", "planning", "no error", task_key)
+    completion_key = c.create_completion("response", "planning", "no error", task_key)
     completion_key_for_removal = c.create_completion(
         "response", "planning", "no error", task_key
     )

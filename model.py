@@ -71,6 +71,7 @@ def reset_state():
     with completions_lock:
         completions.clear()
 
+
 # particular functions
 
 

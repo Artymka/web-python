@@ -1,2 +1,7 @@
 plan.md
 __pycache__/
+.venv/
+.hypothesis/
+.pytest_cache/
+.coverage
+
