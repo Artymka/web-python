@@ -1,12 +1,33 @@
 import random
 import time
 import math
+import threading
 
 completions = []  # key, datetime, response, stage, error, task
+completions_lock = threading.Lock()
 tasks = []  # key, datetime, parameter, session, description, done
+tasks_lock = threading.Lock()
 sessions = []  # key, datetime, ip, locale, user_agent
+sessions_lock = threading.Lock()
+
 
 # common functions
+
+
+def use_lock(lock: threading.Lock):
+    def decorator(f):
+        def wrapper(*args, **kwargs):
+            lock.acquire()
+            res = 0
+            try:
+                res = f(*args, **kwargs)
+            finally:
+                lock.release()
+            return res
+
+        return wrapper
+
+    return decorator
 
 
 def base_create(source: list, *args) -> int:
@@ -43,54 +64,68 @@ def base_get(source: list, key: int) -> list | None:
 
 
 # particular functions
+@use_lock(completions_lock)
 def create_completion(response: str, stage: str, error: str, task: int) -> int:
     return base_create(completions, response, stage, error, task)
 
 
+@use_lock(completions_lock)
 def delete_completion(key: int) -> list | None:
     return base_delete(completions, key)
 
 
+@use_lock(completions_lock)
 def get_completions() -> list:
     return completions
 
 
+@use_lock(completions_lock)
 def get_completion(key: int) -> list | None:
     return base_get(completions, key)
 
 
+@use_lock(tasks_lock)
 def create_task(parameter: str, session: int, description: str, done: int) -> int:
     return base_create(tasks, parameter, session, description, done)
 
 
+@use_lock(tasks_lock)
 def delete_task(key: int) -> list | None:
     return base_delete(tasks, key)
 
 
+@use_lock(tasks_lock)
 def get_tasks() -> list:
     return tasks
 
 
+@use_lock(tasks_lock)
 def get_task(key: int) -> list | None:
     return base_get(tasks, key)
 
 
+@use_lock(sessions_lock)
 def create_session(ip: str, locale: str, user_agent: str) -> int:
     return base_create(sessions, ip, locale, user_agent)
 
 
+@use_lock(sessions_lock)
 def delete_session(key: int) -> list | None:
     return base_delete(sessions, key)
 
 
+@use_lock(sessions_lock)
 def get_sessions() -> list:
     return sessions
 
 
+@use_lock(sessions_lock)
 def get_session(key: int) -> list | None:
     return base_get(sessions, key)
 
 
+@use_lock(completions_lock)
+@use_lock(tasks_lock)
 def aggregate() -> list:
     filt = [
         completion
