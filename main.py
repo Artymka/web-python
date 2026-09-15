@@ -97,10 +97,23 @@ def aggregate() -> list:
         for completion in completions
         if completion[1] >= int(time.time()) - 7 * 60
     ]
-    join = [[t, c] for t in tasks for c in filt if t[0] == c[5]]
-    proj = [[c[2], t[4], t[2]] for t, c in join]
+    join = []
+    pasted_tasks = set()
+    for c in filt:
+        pasted = False
+        for t in tasks:
+            if c[5] == t[0]:
+                join.append([c[2], t[4], t[2]])
+                pasted_tasks.add(t[0])
+                pasted = True
+                break
+        if not pasted:
+            join.append([c[2], None, None])
+    for t in tasks:
+        if t[0] not in pasted_tasks:
+            join.append([None, t[4], t[2]])
 
-    return proj
+    return join
 
 
 def repl():
