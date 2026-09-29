@@ -8,3 +8,7 @@ radon==6.0.1
 # xenon==0.9.3
 
 isort==5.13.2
+
+pytest==9.1.1
+hypothesis==6.168.3
+coverage==7.16.2

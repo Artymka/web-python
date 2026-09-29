@@ -20,12 +20,16 @@ RADON_MIN_GRADE   := B
 # ============================================================
 # Цели
 # ============================================================
-.PHONY: help venv install format format-check lint complexity check check-all clean clean-all
+.PHONY: help venv install test test-html format format-check lint complexity check check-all clean clean-all
+
+COVERAGE_ARGS := --branch --source=$(SRC_DIR)
 
 help:
 	@echo "Available commands:"
 	@echo "  make venv          - create virtual environment"
 	@echo "  make install       - install dependencies"
+	@echo "  make test          - run MBT tests with branch coverage"
+	@echo "  make test-html     - run tests and build html coverage report"
 	@echo "  make format        - format code with black"
 	@echo "  make format-check  - check formatting (CI)"
 	@echo "  make lint          - run flake8"
@@ -46,6 +50,15 @@ install: venv
 	@$(VENV_PYTHON) -m pip install --upgrade pip
 	@$(VENV_PYTHON) -m pip install -r requirements.txt
 	@echo "Dependencies installed."
+
+test: venv
+	@$(VENV_PYTHON) -m coverage run $(COVERAGE_ARGS) -m pytest $(TEST_DIR)
+	@$(VENV_PYTHON) -m coverage report -m
+
+test-html: venv
+	@$(VENV_PYTHON) -m coverage run $(COVERAGE_ARGS) -m pytest $(TEST_DIR)
+	@$(VENV_PYTHON) -m coverage html
+	@echo "HTML report: htmlcov/index.html"
 
 format: venv
 	@$(VENV_PYTHON) -m black --line-length $(BLACK_LINE_LENGTH) --target-version $(BLACK_TARGET) $(SRC_DIR) $(TEST_DIR)
@@ -72,7 +85,8 @@ check-all: format lint complexity
 
 clean:
 	@echo "Cleaning caches..."
-	@find . -type d \( -name '__pycache__' -o -name '.pytest_cache' -o -name '.mypy_cache' -o -name '.ruff_cache' \) -prune -exec rm -rf {} +
+	@find . -type d \( -name '__pycache__' -o -name '.pytest_cache' -o -name '.mypy_cache' -o -name '.ruff_cache' -o -name '.hypothesis' -o -name 'htmlcov' \) -prune -exec rm -rf {} +
+	@rm -f .coverage .coverage.*
 
 clean-all: clean
 	@echo "Removing virtual environment..."
