@@ -16,8 +16,8 @@ from io import BytesIO
 from unittest.mock import patch
 
 import hypothesis.strategies as st
-import rpc
-from client import Client
+import src.rpc as rpc
+from src.client import Client
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis.stateful import (
     RuleBasedStateMachine,
@@ -28,7 +28,7 @@ from hypothesis.stateful import (
     run_state_machine_as_test,
 )
 
-import model as server_model
+import src.model as server_model
 
 RECENT_WINDOW = 7 * 60
 KEY_STRATEGY = st.integers(min_value=0, max_value=1 << 31)

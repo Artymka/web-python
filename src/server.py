@@ -3,8 +3,8 @@ import threading
 from typing import Callable, Dict
 from datetime import datetime
 
-import model
-import rpc
+import src.model as model
+import src.rpc as rpc
 
 
 operation_funcs = {

@@ -2,7 +2,7 @@ import socket
 from typing import Any
 from datetime import datetime
 
-import rpc
+import src.rpc as rpc
 
 
 class Client:

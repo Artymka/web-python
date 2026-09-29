@@ -9,11 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from client import Client
-from server import Server
-
-SRC_DIR = Path(__file__).resolve().parent.parent / "src"
-sys.path.insert(0, str(SRC_DIR))
+from src.client import Client
+from src.server import Server
 
 
 STARTUP_TIMEOUT = 5.0
