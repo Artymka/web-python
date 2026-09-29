@@ -35,9 +35,6 @@ KEY_STRATEGY = st.integers(min_value=0, max_value=1 << 31)
 ORPHAN_TASK = -1
 
 
-"""helper"""
-
-
 def _strip(record: list) -> list:
     """Убирает непредсказуемое поле datetime (индекс 1) из записи."""
     return [record[0], *record[2:]]
@@ -59,9 +56,6 @@ def _lists_match(expected: list, actual: list) -> bool:
 
 def _multiset(rows: list) -> list:
     return sorted((tuple(r) for r in rows), key=repr)
-
-
-"""state machine"""
 
 
 class RpcStateMachine(RuleBasedStateMachine):

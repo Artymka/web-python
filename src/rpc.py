@@ -51,7 +51,6 @@ def read_response(f: BinaryIO) -> Tuple[int, Any]:
     return (operation, content)
 
 
-"""Operation codes"""
 CREATE_COMPLETION_CODE = 0
 DELETE_COMPLETION_CODE = 1
 GET_COMPLETIONS_CODE = 2

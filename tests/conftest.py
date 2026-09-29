@@ -9,12 +9,12 @@ from pathlib import Path
 
 import pytest
 
-"""Делаем модули из src/ доступными для импорта как top-level (model, rpc, ...)"""
+from client import Client
+from server import Server
+
 SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
 
-from client import Client
-from server import Server
 
 STARTUP_TIMEOUT = 5.0
 

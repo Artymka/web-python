@@ -11,9 +11,6 @@ sessions = []
 sessions_lock = threading.Lock()
 
 
-"""Common functions"""
-
-
 def use_lock(lock: threading.Lock):
     def decorator(f):
         def wrapper(*args, **kwargs):
@@ -70,9 +67,6 @@ def reset_state():
         tasks.clear()
     with completions_lock:
         completions.clear()
-
-
-"""particular functions"""
 
 
 @use_lock(completions_lock)
@@ -179,9 +173,6 @@ def aggregate() -> list:
     return _append_unmatched(join, tasks, used_ids)
 
 
-"""repl"""
-
-
 def repl_validation(
     params: List[str], types: List[type]
 ) -> Callable[[], List]:
@@ -278,7 +269,7 @@ Firstly type number of operation, then type arguments:
             operation_number = int(input("> "))
         except ValueError:
             continue
-        if not (0 <= operation_number <= 12):
+        if not (CREATE_COMPLETION_REPL <= operation_number <= AGGREGATE_REPL):
             continue
 
         args = validation_funcs[operation_number]()
